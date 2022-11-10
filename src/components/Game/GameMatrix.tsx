@@ -4,9 +4,7 @@ import { GameTile } from "./GameTile";
 
 const GameWrapper = styled.div`
   display: flex;
-  flex-direction: row;
   flex-wrap: wrap;
-  align-items: center;
   justify-content: space-around;
   width: 50%;
   margin: 0 auto;
@@ -40,41 +38,36 @@ export const GameMatrix: React.FC<{
   ];
 
   const [isHidden, setHiddenState] = useState(new Map<number, boolean>());
-  const [ firstIndex, setFirstIndex ] = useState<string>();
-
+  const [ firstIndex, setFirstIndex ] = useState<number>(-1);
+  const [ secondIndex, setSecondtIndex ] = useState<number>(-1);
 
   const onTileClick = useCallback(
     (e: React.SyntheticEvent, cellIndex: number) => {
       e.preventDefault();
-
-      const card = gameMatrix[cellIndex]
       let isMatchCards = false;
       
       const newState = new Map(isHidden);
       newState.set(cellIndex, !isHidden.get(cellIndex));
       setHiddenState(newState);
 
-      if (!firstIndex) {
-        setFirstIndex(card)
+      if (firstIndex < 0) {
+        setFirstIndex(cellIndex)
+      } else if (secondIndex < 0) {
+        setSecondtIndex(cellIndex);
       } else {
-        isMatchCards = isCardMatch(firstIndex, card)
-      }
-
-      if(!isMatchCards) {
-        console.log('isHidden', isHidden)
-        newState.set(cellIndex, false);
-        newState.set(cellIndex, false);
+        isMatchCards = isMatch(firstIndex, secondIndex)
+        newState.set(firstIndex, isMatchCards);
+        newState.set(secondIndex, isMatchCards);
+        setFirstIndex(cellIndex);
+        setSecondtIndex(-1);
         setHiddenState(newState);
       }
-
     },
     [isHidden, setHiddenState]
   );
 
-  const isCardMatch = (firstIndex: string = '', secondIndex: string = '') => {
-    //compare the array with the index no witth the value
-    return firstIndex === secondIndex && gameMatrix.includes(firstIndex) && gameMatrix.includes(secondIndex);
-  }
+  const isMatch = (firstIndex: number, secondIndex: number): boolean => 
+    gameMatrix[firstIndex] === gameMatrix[secondIndex];
 
   return (
     <>

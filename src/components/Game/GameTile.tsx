@@ -9,6 +9,7 @@ const GameTileWraper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-around;
+  flex-basis: 25%;
 `;
 
 export const GameTile: React.FC<{
